@@ -1,0 +1,139 @@
+---
+title: "TUI Guide"
+description: "Master the 8gent terminal user interface: animations, ADHD mode, Kanban board, and keyboard shortcuts"
+---
+
+## Overview
+
+The 8gent TUI is built with Ink v6 (React for CLI). It provides a rich terminal experience with animations, intelligent suggestions, visual task management, and accessibility features. The design system uses semantic color tokens so the UI remains readable across terminal themes (dark, light, Solarized, etc.).
+
+## Key Screens
+
+### Chat Screen
+
+The primary interface. You type at the bottom, messages appear above. The status bar shows the active model, git branch, and current agent mode.
+
+Messages render with typing effects - characters appear progressively for short responses, word-by-word for longer content. Fade-in and pop-in animations smooth the visual flow.
+
+### Kanban Board
+
+Toggle with `/kanban` or `/k`. The board has three columns: **Backlog**, **In Progress**, and **Done**. When 8gent creates a plan, each step becomes a Kanban card that moves automatically as the agent works.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Backlog (3)     │ In Progress (1)  │ Done (2)                  │
+├─────────────────────────────────────────────────────────────────┤
+│ ○ Add tests     │ ● Fix auth bug   │ ✓ Setup project           │
+│ ○ Update docs   │                  │ ✓ Create components       │
+│ ○ Add caching   │                  │                           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Navigate cards with arrow keys.
+
+### Animation Gallery
+
+Access with `/animations` or `/anim`. 8gent includes ten ASCII animations:
+
+| Animation | Command | Description |
+|-----------|---------|-------------|
+| Matrix Rain | `/animations matrix` | Classic green falling code |
+| Fire Effect | `/animations fire` | Dynamic flames |
+| DNA Helix | `/animations dna` | Rotating double helix |
+| Starfield | `/animations stars` | 3D space travel effect |
+| Bouncing Dots | `/animations dots` | Mesmerizing particles |
+| Glitch Text | `/animations glitch` | Cyberpunk text corruption |
+| Confetti | `/animations confetti` | Celebration particles |
+| Waveform | `/animations wave` | Audio-style wave |
+| Gradient Wave | `/animations gradient` | Smooth color transitions |
+| Gallery | `/animations all` | Browse all with arrow keys |
+
+### Process Sidebar
+
+Toggle with **Ctrl+B**. Shows background tasks running in parallel - long-running commands, dev servers, build processes. Tasks are promoted to the sidebar automatically when they exceed a time threshold.
+
+## ADHD / Bionic Reading Mode
+
+Toggle with `/adhd`, `/bionic`, or `/focus`.
+
+Bionic reading bolds the first half of each word, creating visual anchors that help your brain process text faster:
+
+```
+Normal:   The quick brown fox jumps over the lazy dog
+Bionic:   Th·e qui·ck bro·wn fox jum·ps ov·er the la·zy dog
+```
+
+The bolded portions (before the dot) create fixation points. Research suggests this can improve reading speed by up to 2x for some readers.
+
+Toggle on or off explicitly with `/adhd on` or `/adhd off`.
+
+## Ghost Suggestions
+
+As you type, dim ghost text appears predicting your next command or input. The prediction system draws from three sources:
+
+- **Git state** - If you have uncommitted changes, it may suggest a commit
+- **Active plan** - Shows the next step from the current BMAD plan
+- **Command history** - Learns from your recent inputs
+
+Press **Tab** to accept the full suggestion. Press **Esc** to dismiss it.
+
+## Voice Output
+
+8gent can speak completion summaries aloud using TTS. The default voice is Moira (Irish) on macOS. Configure voice output via the `/voice` command or through a hook:
+
+```json
+{
+  "type": "onComplete",
+  "mode": "shell",
+  "command": "say -v Moira '{result}'"
+}
+```
+
+On macOS, this uses the built-in `say` command. An optional local TTS server can be configured for custom voices. Voice output is useful for long-running tasks where you have switched to another window.
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| **Tab** | Accept ghost suggestion |
+| **Esc** | Dismiss ghost suggestion |
+| **Ctrl+T** | Cycle agent mode (Planning / Researching / Implementing / Testing / Debugging) |
+| **Ctrl+B** | Toggle process sidebar |
+| **Up / Down** | Navigate command history |
+| **Arrow keys** | Navigate Kanban cards (when board is visible) |
+
+## Message Components
+
+The TUI uses a layered component system for rendering messages:
+
+- **FadeIn** - Smooth opacity transitions for new messages
+- **PopIn** - Scale-up entrance effects for badges and alerts
+- **TypingText** - Character-by-character reveal for short responses
+- **WordByWord** - Word-level streaming for long content
+- **GlowText** - Pulsing highlight effect for important information
+
+### Processing Indicators
+
+- **AnimatedSpinner** - Multiple styles: dots, line, arc, bounce
+- **StepIndicator** - Multi-step progress showing Plan, Tools, Execute phases
+- **WaveProgress** - Animated sine wave progress bar for long operations
+
+## Design System
+
+The TUI follows a design-system-first architecture. All UI is built from primitive components rather than raw Ink `<Text>` and `<Box>` elements.
+
+Key primitives:
+
+| Component | Purpose |
+|-----------|---------|
+| `AppText` | Base text with theme-aware colors |
+| `MutedText` | De-emphasized secondary text |
+| `Heading` | Section headings |
+| `Stack` | Vertical layout |
+| `Inline` | Horizontal layout |
+| `Card` | Bordered content container |
+| `Badge` | Status indicators |
+| `Alert` | Feedback messages |
+| `SpinnerRow` | Loading states |
+
+This architecture lives at `apps/tui/src/components/primitives/` and `apps/tui/src/theme/`.

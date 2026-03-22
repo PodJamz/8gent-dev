@@ -1,0 +1,109 @@
+---
+title: "BMAD Method"
+description: "How 8gent uses the Breakthrough Method of Agile AI-driven Development for structured task execution"
+---
+
+## What is BMAD?
+
+BMAD stands for **Breakthrough Method of Agile AI-driven Development**. It is a structured approach to AI-assisted coding that separates planning from execution, ensuring the agent thinks before it acts.
+
+Most chat-based coding agents operate in freeform mode - they receive a prompt and immediately start generating code. This works for simple tasks, but complex projects suffer from scope creep, missed requirements, and wasted tokens on wrong approaches.
+
+BMAD solves this by enforcing three distinct phases: **Plan**, **Execute**, and **Verify**.
+
+## Planning Phase
+
+When you give 8gent a task, it first classifies the work into one of five categories:
+
+| Category | Example |
+|----------|---------|
+| **Code** | Build a REST API, fix a bug, refactor a module |
+| **Creative** | Generate lyrics, design a UI mockup |
+| **Research** | Investigate an API, compare libraries |
+| **Planning** | Architect a system, create a project roadmap |
+| **Communication** | Draft an email, write documentation |
+
+Each category has a tailored planning approach. Code tasks get numbered implementation steps. Research tasks get exploration avenues. Creative tasks get structured briefs.
+
+### How Planning Looks
+
+```
+User: Build a Next.js site with auth and dark mode
+
+8gent:
+┌─────────────────────────────────────────┐
+│ PLAN                                    │
+├─────────────────────────────────────────┤
+│ 1. Initialize Next.js project           │
+│ 2. Set up authentication (NextAuth)     │
+│ 3. Create theme provider (dark/light)   │
+│ 4. Build UI components                  │
+│ 5. Add tests and verify                 │
+└─────────────────────────────────────────┘
+```
+
+The plan is visible at any time via `/plan`. It also populates the Kanban board automatically - each step becomes a card that moves from Backlog to In Progress to Done as 8gent works.
+
+## Execution Phase
+
+Once the plan is set, 8gent executes each step sequentially. During execution, the system tracks:
+
+- **Modified files** - Every file written or edited
+- **Tool calls** - Every command run, search performed, or file read
+- **Errors encountered** - Build failures, type errors, test failures
+- **Evidence collected** - Pass/fail results from verification checks
+
+The proactive planner updates predictions after every tool call, adjusting the remaining steps based on what it learns.
+
+### Foresight and Avenues
+
+8gent does not just follow a linear plan. It anticipates problems and explores alternatives:
+
+- **Prediction** - Analyzes the current task to predict the next 3-5 logical steps. View with `/predict` or `/next`.
+- **Avenues** - Before committing to an approach, 8gent briefly explores multiple options and weighs trade-offs. View with `/avenues`.
+- **Proactive warnings** - If 8gent detects scope creep, technical debt, circular dependencies, over-engineering, or performance traps, it speaks up.
+
+```
+Warning: Adding a 4th boolean prop to <Button> suggests
+it may be time for a variant-based API instead.
+
+Shall I propose a refactor, or continue as planned?
+```
+
+### Momentum Tracking
+
+The planner tracks execution velocity:
+
+- **Steps completed** - How many plan steps are done
+- **Rate** - Steps per minute
+- **Streak** - Consecutive successful steps
+
+View momentum stats with `/momentum`.
+
+## Verification Phase
+
+After execution, 8gent collects evidence that the work is correct:
+
+- **Type checking** - Runs `tsc` to verify TypeScript compiles
+- **Tests** - Runs test suites if they exist
+- **Lint** - Checks for code quality issues
+- **Build** - Verifies the project builds successfully
+- **Manual checks** - Reads back modified files to confirm changes
+
+Evidence badges (pass/fail) appear in the chat stream after each file write and command execution. At the end of a task, 8gent provides a completion report summarizing all evidence.
+
+View the full evidence breakdown with `/evidence`.
+
+## How BMAD Differs from Freeform Agents
+
+| Aspect | Freeform Agent | BMAD Agent |
+|--------|---------------|------------|
+| Planning | None - dives straight into code | Explicit plan before any code is written |
+| Scope | Unbounded - may go on tangents | Bounded by the plan steps |
+| Visibility | Chat stream only | Plan view, Kanban board, predictions, evidence |
+| Recovery | Must re-explain on failure | Adjusts plan and retries the specific step |
+| Verification | User manually checks | Automatic evidence collection |
+
+## BMAD Documents
+
+8gent ships with 20 BMAD planning documents covering project briefs, product requirement documents (PRDs), architecture docs, and epics. These live in `docs/bmad/` within the 8gent-code repository and serve as templates for the agent's planning process.

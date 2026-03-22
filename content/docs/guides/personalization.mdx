@@ -1,0 +1,161 @@
+---
+title: "Personalization"
+description: "How 8gent learns who you are, adapts to your style, and gets smarter every session"
+---
+
+## Overview
+
+8gent's personalization system is built on a simple principle: **the agent should know you better with every session**. Rather than asking you to fill out config files or tweak YAML, 8gent detects your environment, asks three focused questions, and then adapts continuously.
+
+The personalization pipeline has four stages:
+
+1. **Auto-detection** - reads your git config, scans for Ollama/LM Studio models, checks `gh auth` status.
+2. **Onboarding** - a 3-question interactive flow that fills in what detection missed.
+3. **Cloud sync** - preferences travel with you across machines via Convex (after `/auth login`).
+4. **Continuous learning** - session traces are collected and quality-filtered for personal LoRA fine-tuning.
+
+All personalization data lives in `.8gent/user.json` (local) and optionally syncs to Convex (cloud). Local data is never sent to third parties. Cloud sync is opt-in via authentication.
+
+## Smart Onboarding
+
+On first launch, 8gent runs auto-detection in parallel before asking you anything.
+
+### Auto-Detection
+
+| Signal | How it's detected | What it sets |
+|--------|-------------------|-------------|
+| Your name | `git config --global user.name` | `identity.name` |
+| Your email | `git config --global user.email` | displayed in onboarding summary |
+| Ollama models | `ollama list` | available models, default model |
+| LM Studio models | `GET http://localhost:1234/v1/models` | available models |
+| GitHub auth | `gh auth status` | GitHub username |
+| Preferred provider | presence of Ollama or LM Studio | default provider |
+
+All checks run via `Promise.allSettled` - if any fail (e.g., Ollama not installed), they are silently skipped.
+
+### The 3-Question Flow
+
+After detection, onboarding presents what it found and asks only what it could not infer:
+
+1. **Identity confirmation** - Shows detected name, email, GitHub, provider, models. Press Enter to accept or type corrections.
+2. **Communication style** - Choose from: concise, detailed, casual, or formal.
+3. **Confirmation** - Review and confirm settings.
+
+Re-run onboarding at any time with `/onboarding` (aliases: `/onboard`, `/setup`, `/intro`).
+
+## Adaptive System Prompt
+
+8gent personalizes its system prompt based on your onboarding data. A `USER_CONTEXT_SEGMENT` is injected into every agent turn.
+
+### Style Mapping
+
+| Style | System prompt instruction |
+|-------|--------------------------|
+| `concise` | Be brief and direct. Skip explanations unless asked. |
+| `detailed` | Explain your reasoning. Teach as you go. |
+| `casual` | Keep it friendly and collaborative. We're partners. |
+| `formal` | Maintain professional tone. Be precise. |
+
+### Language
+
+If your language is set to anything other than English, the system prompt includes the language preference. The agent responds in your specified language while keeping code comments and identifiers in English.
+
+## Preferences Cloud Sync
+
+After authenticating with `/auth login`, your preferences sync to Convex and follow you across devices.
+
+### What Syncs
+
+| Field | Description |
+|-------|-------------|
+| Default model | Your preferred LLM |
+| Default provider | Ollama, LM Studio, or OpenRouter |
+| Communication style | How Eight talks to you |
+| Language | Response language |
+| Git branch prefix | e.g. `8gent/` |
+| Autonomy threshold | When Eight asks for permission |
+
+### What Stays Local
+
+These fields are machine-specific and never leave your device:
+
+- Local model inventory (Ollama and LM Studio)
+- GitHub auth state
+- Voice engine configuration
+- Confidence scores and tracking
+
+### Merge Strategy
+
+The merge uses a **last-write-wins** strategy based on timestamps. If Convex is unreachable, the operation silently fails and local state is authoritative.
+
+## Session History and Resume
+
+8gent tracks your conversations and lets you pick up where you left off, even on a different machine.
+
+### Checkpoints
+
+- **Message checkpoint:** every 60 seconds if new messages exist
+- **Token/tool-call deltas:** flushed every 10 seconds
+- **On session end:** final totals written, session marked as ended
+
+### Commands
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/history` | `/hist`, `/sessions` | Browse all past sessions |
+| `/resume` | `/res` | Resume a recent session (pick from last 5) |
+| `/continue` | `/cont`, `/last` | Continue the most recent session automatically |
+| `/compact` | `/compress`, `/summarize` | Summarize and compress the current conversation |
+
+### Cross-Device Resume
+
+Because checkpoints sync to Convex, you can start a session on your laptop and resume it on your desktop. Run `/auth login` on both machines, then use `/resume` to pick up where you left off.
+
+## Personal LoRA Training (Preview - Q2 2026)
+
+8gent collects high-quality session traces for personal LoRA fine-tuning. This feature is in preview and not yet shipped.
+
+### Quality Filters
+
+A training pair is only collected if **all** of the following are true:
+
+| Filter | Threshold |
+|--------|-----------|
+| PRM judge score | >= 0.7 |
+| User did not correct the response | `false` |
+| All tool calls succeeded | `true` |
+| Response length | >= 50 characters |
+
+### Data Location
+
+Training data is stored locally at `.8gent/kernel/training/`. Collection happens automatically. To enable the full RL training pipeline, set `trainingProxy.enabled: true` in `.8gent/config.json`.
+
+## Autonomy Thresholds
+
+The `askThreshold` setting controls when 8gent pauses to ask for permission:
+
+| Value | Behavior |
+|-------|----------|
+| `always` | Ask before every action |
+| `important` | Ask before destructive or irreversible actions |
+| `fatal-only` | Only ask before potentially dangerous operations (default) |
+| `never` | Full autonomy - never ask |
+
+## All Personalization Commands
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/onboarding` | `/onboard`, `/setup`, `/intro` | Start or restart personalization setup |
+| `/preferences` | `/prefs`, `/settings` | View or edit your preferences |
+| `/auth` | `/login`, `/account` | Authentication management |
+| `/model` | `/m` | Select LLM model |
+| `/provider` | `/pr` | Select LLM provider |
+| `/voice` | `/v` | Voice TTS settings |
+| `/language` | `/lang`, `/l` | Set response language |
+| `/history` | `/hist`, `/sessions` | Browse past sessions |
+| `/resume` | `/res` | Resume a recent session |
+| `/continue` | `/cont`, `/last` | Continue most recent session |
+| `/compact` | `/compress`, `/summarize` | Compress current conversation |
+| `/infinite` | `/inf` | Enable autonomous mode |
+| `/adhd` | `/bionic`, `/focus` | Toggle ADHD/bionic reading mode |
+| `/status` | `/s`, `/st` | Show session status |

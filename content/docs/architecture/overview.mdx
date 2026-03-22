@@ -1,0 +1,148 @@
+---
+title: "Architecture Overview"
+description: "How 8gent's monorepo is structured and how its core packages connect"
+---
+
+## System Flow
+
+8gent processes user intent through a layered pipeline:
+
+```
+User Intent
+    |
+8gent TUI (Ink/React)
+    |-- Animations & Effects
+    |-- ADHD Mode
+    |-- Ghost Suggestions
+    |-- Kanban Board
+    |
+Proactive Planner (BMAD)
+    |
+Multi-Agent Orchestration
+    |
+Toolshed (capability discovery)
+    |
++--------------------------------------+
+| MCP | LSP | Web | Shell | AST | FS  |
+| PDF | Image | Notebook | Background |
++--------------------------------------+
+    |
+Evidence Collection & Validation
+    |
+Completion Report + Voice Output
+```
+
+The key design principle is that the agent prompt stays small. Tools and capabilities are discovered through the toolshed at runtime rather than loaded into context upfront.
+
+## Monorepo Structure
+
+The project uses a Bun workspace monorepo with two main directories: `apps/` for user-facing applications and `packages/` for shared libraries.
+
+```
+8gent-code/
+|-- apps/
+|   |-- tui/            # Terminal UI (Ink v6, React for CLI)
+|   |-- clui/           # Tauri 2.0 desktop overlay app
+|   |-- dashboard/      # Next.js admin panel
+|   |-- debugger/       # Session debugger (Next.js)
+|   |-- installer/      # CLI installer
+|-- packages/
+|   |-- eight/          # Core agent engine, REPL, providers
+|   |-- ast-index/      # TypeScript AST parsing for token-efficient retrieval
+|   |-- mcp/            # MCP client implementation
+|   |-- lsp/            # LSP client for code intelligence
+|   |-- orchestration/  # Multi-agent coordination
+|   |-- planning/       # Proactive BMAD planning engine
+|   |-- kernel/         # RL fine-tuning pipeline
+|   |-- quarantine/     # Skill security sandbox
+|   |-- toolshed/       # Capability discovery and registry
+|   |-- validation/     # Evidence collection
+|   |-- reporting/      # Completion reports
+|   |-- permissions/    # Command permission system
+|   |-- hooks/          # Automation hooks
+|   |-- skills/         # Skill framework
+|   |-- tools/          # Web, PDF, image, notebook tools
+|   |-- personality/    # The Infinite Gentleman voice
+|   |-- auth/           # Clerk authentication (device code flow)
+|   |-- db/             # Convex reactive database
+|   |-- voice/          # Speech-to-Text via Whisper
+|   |-- control-plane/  # Multi-tenant management
+|   |-- ai/             # Vercel AI SDK integration
+|   |-- types/          # Shared TypeScript types
+|   |-- specifications/ # Session spec v2
+|   |-- harness-cli/    # Headless CLI for session inspection
+|-- benchmarks/
+|   |-- autoresearch/   # Karpathy-style iterative improvement
+|   |-- categories/     # 6 tiers, 39+ tasks
+|   |-- fixtures/       # Test fixtures
+|-- config/
+|   |-- training.yaml   # RL training configuration
+|-- docs/
+|   |-- bmad/           # 20 BMAD planning documents
+```
+
+## Core Packages
+
+### packages/eight
+
+The main agent engine. Contains the REPL, tool loop, provider clients (Ollama, OpenRouter, LM Studio), context engineering, and system prompt. This is where user messages are processed and tool calls are orchestrated.
+
+Key files: `clients/ollama.ts`, `clients/openrouter.ts`, `prompts/system-prompt.ts`, `version-manager.ts`
+
+### packages/planning
+
+The proactive BMAD planner. Classifies tasks into categories (Code, Creative, Research, Planning, Communication), generates step-by-step plans, tracks momentum, and predicts upcoming steps.
+
+### packages/toolshed
+
+The capability layer inspired by Stripe's agent architecture. Tools register themselves with capabilities and permissions. The agent queries the toolshed by capability (e.g., `code.symbol`) rather than loading every tool into its prompt.
+
+### packages/ast-index
+
+TypeScript AST parsing for symbol-level code retrieval. Instead of reading entire files, the agent fetches specific symbols, significantly reducing token usage per operation.
+
+### packages/kernel
+
+The RL fine-tuning pipeline. Four phases: proxy management, judge scoring (Gemini Flash), GRPO training orchestration, and production loop with MadMax scheduling. Off by default.
+
+### packages/validation
+
+Evidence collection system. Gathers pass/fail signals after file writes, command executions, and git commits. Feeds into the completion report.
+
+### packages/orchestration
+
+Multi-agent coordination. Supports spawning subagents for complex tasks and parallel tool execution.
+
+## TUI Architecture
+
+The TUI at `apps/tui/` follows a design-system-first approach:
+
+```
+apps/tui/src/
+|-- theme/          # Tokens, semantic colors, ThemeProvider
+|-- components/
+|   |-- primitives/ # AppText, MutedText, Heading, Stack, Card, Badge
+|   |-- feedback/   # Alert, SpinnerRow, ProgressBar
+|   |-- forms/      # TextField, SelectField
+|   |-- data-display/ # Table, KeyValueList
+|   |-- navigation/ # Header, Footer
+|-- hooks/          # useHotkeys, useViewport, useGhostSuggestion
+|-- lib/            # Text utils (truncate, wrap), formatters
+|-- screens/        # ChatScreen, OnboardingScreen
+|-- app/            # Providers (ThemeProvider + ADHDMode)
+```
+
+Screens compose primitives and widgets. No raw Ink `<Text>` or `<Box>` elements appear in screen-level code.
+
+## Data Flow
+
+1. **User input** enters through the TUI's command input component
+2. **Ghost suggestion** system checks git state, plan context, and history to offer predictions
+3. **Slash commands** are intercepted and handled locally (e.g., `/kanban`, `/model`)
+4. **Chat messages** are sent to the agent engine (`packages/eight`)
+5. **The planner** classifies the task and generates a BMAD plan
+6. **The tool loop** executes plan steps, querying the toolshed for needed capabilities
+7. **Evidence collector** captures verification signals after each tool call
+8. **Results stream** back to the TUI as messages with typing effects
+9. **Kanban board** updates automatically as plan steps progress
+10. **Completion report** summarizes the session with evidence counts

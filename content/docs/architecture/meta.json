@@ -1,0 +1,10 @@
+{
+  "title": "Architecture",
+  "pages": [
+    "overview",
+    "soul",
+    "kernel-finetuning",
+    "autoresearch",
+    "model-router"
+  ]
+}

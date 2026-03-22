@@ -1,0 +1,146 @@
+---
+title: "Tools Reference"
+description: "Complete catalog of tools available through 8gent's toolshed capability system"
+---
+
+## How Tools Work
+
+8gent uses a toolshed architecture inspired by Stripe's agent design. The agent never carries all tools in its prompt. Instead, it queries the toolshed by capability when needed, keeping the prompt small while allowing the tool catalog to scale.
+
+```typescript
+// Agent queries by capability
+toolshed.query(capability: "code.symbol")
+// Returns: get_outline, get_symbol, search_symbols
+```
+
+## Core Tools
+
+Basic file and command operations available in every session.
+
+| Tool | Description |
+|------|-------------|
+| `read_file` | Read file contents |
+| `write_file` | Write file contents (auto-strips absolute paths to relative) |
+| `edit_file` | Edit file with find/replace |
+| `list_files` | List directory contents (includes directories) |
+| `execute_command` | Run shell commands (subject to permission system) |
+| `search_files` | Glob and grep file search |
+
+## AST Tools
+
+Symbol-level code retrieval for massive token savings. Instead of reading a 2,119-token file, fetch a specific symbol for 61 tokens.
+
+| Tool | Description |
+|------|-------------|
+| `get_outline` | Extract all symbols from a file with signatures |
+| `get_symbol` | Retrieve a single symbol by its AST path |
+| `search_symbols` | Cross-file symbol search by name or pattern |
+
+### Token Efficiency
+
+AST-first retrieval fetches only the symbols needed rather than reading entire files, significantly reducing token usage per operation.
+
+## MCP Tools
+
+Connect to external tools via the Model Context Protocol. Available tools depend on your MCP server configuration.
+
+| Tool | Description |
+|------|-------------|
+| `mcp_connect` | Connect to an MCP server |
+| `mcp_call` | Call an MCP tool |
+| `mcp_list` | List available MCP capabilities |
+
+## LSP Tools
+
+Code intelligence via Language Server Protocol.
+
+| Tool | Description |
+|------|-------------|
+| `lsp_definition` | Go to definition |
+| `lsp_references` | Find all references |
+| `lsp_hover` | Get hover information (types, docs) |
+| `lsp_completion` | Get code completions |
+| `lsp_diagnostics` | Get diagnostics (errors, warnings) |
+
+## Web Tools
+
+Search and fetch content from the web.
+
+| Tool | Description |
+|------|-------------|
+| `web_search` | Search the web |
+| `web_fetch` | Fetch URL content |
+| `extract_content` | Extract readable content from a URL |
+
+## Media Tools
+
+Read and process non-code files.
+
+| Tool | Description |
+|------|-------------|
+| `read_image` | Read and describe images |
+| `read_pdf` | Extract text from PDF files |
+| `search_pdf` | Search within PDF documents |
+
+## Notebook Tools
+
+Work with Jupyter notebooks.
+
+| Tool | Description |
+|------|-------------|
+| `read_notebook` | Read a Jupyter notebook (all cells with outputs) |
+| `edit_cell` | Edit a specific notebook cell |
+| `run_cell` | Execute a notebook cell |
+
+## Background Tools
+
+Manage long-running processes.
+
+| Tool | Description |
+|------|-------------|
+| `run_background` | Run a command in the background |
+| `check_background` | Check the status of a background task |
+| `kill_background` | Stop a background task |
+
+Long-running commands are automatically promoted to the process sidebar (Ctrl+B) when they exceed a time threshold.
+
+## Capability Groups
+
+Tools are organized by capability for discovery:
+
+| Capability | Tools |
+|------------|-------|
+| `code` | AST query, symbol edit, patch |
+| `code.symbol` | get_outline, get_symbol, search_symbols |
+| `web` | web_search, web_fetch, extract_content |
+| `media` | read_image, read_pdf, search_pdf |
+| `mcp` | mcp_connect, mcp_call, mcp_list |
+| `lsp` | lsp_definition, lsp_references, lsp_hover, lsp_completion, lsp_diagnostics |
+| `execution` | execute_command, run_background, check_background, kill_background |
+| `repo` | list_files, search_files |
+
+## Permission Model
+
+Tools declare required permissions. The permission system checks these before execution:
+
+| Permission | Description |
+|------------|-------------|
+| `read:code` | Read source files |
+| `write:code` | Modify source files |
+| `read:fs` | Read filesystem |
+| `write:fs` | Write filesystem |
+| `exec:shell` | Execute shell commands |
+| `net:fetch` | Make HTTP requests |
+| `net:listen` | Open ports |
+| `mcp:connect` | Connect to MCP servers |
+| `lsp:connect` | Connect to LSP servers |
+
+## Evidence Integration
+
+All tools integrate with the evidence collection system. After a file write, command execution, or git commit, the validation system captures pass/fail signals:
+
+```typescript
+const result = await toolshed.execute("write_file", { path, content });
+// Evidence collector automatically captures the result
+// Pass/fail badge appears in the chat stream
+```

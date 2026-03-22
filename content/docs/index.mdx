@@ -1,0 +1,136 @@
+---
+title: 8gent Documentation
+description: Everything you need to build with 8gent, the autonomous local-first coding agent.
+---
+
+import { Cards, Card } from 'fumadocs-ui/components/card';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+8gent is an autonomous coding agent that runs locally via Ollama. It uses the BMAD methodology for structured planning and execution, AST-first navigation for token efficiency, and self-improves via autoresearch and kernel fine-tuning.
+
+---
+
+## Get Started
+
+<Cards>
+  <Card
+    title="Installation"
+    description="Get 8gent running on your machine in 5 minutes with Ollama and Bun."
+    href="/docs/getting-started/installation"
+  />
+  <Card
+    title="Quick Start"
+    description="Your first coding session — from prompt to shipped code."
+    href="/docs/getting-started/quick-start"
+  />
+  <Card
+    title="Configuration"
+    description="Customize models, providers, and agent behavior."
+    href="/docs/getting-started/configuration"
+  />
+</Cards>
+
+## Architecture
+
+<Cards>
+  <Card
+    title="System Overview"
+    description="How the kernel, model router, and agent loop fit together."
+    href="/docs/architecture/overview"
+  />
+  <Card
+    title="Eight's Soul"
+    description="Identity, voice, principles, and boundaries of the agent."
+    href="/docs/architecture/soul"
+  />
+  <Card
+    title="Model Router"
+    description="Intelligent routing across local and cloud models."
+    href="/docs/architecture/model-router"
+  />
+  <Card
+    title="Autoresearch"
+    description="Self-improving benchmark loops and pattern extraction."
+    href="/docs/architecture/autoresearch"
+  />
+  <Card
+    title="Kernel Fine-Tuning"
+    description="LoRA training pipeline for local model specialization."
+    href="/docs/architecture/kernel-finetuning"
+  />
+</Cards>
+
+## Guides
+
+<Cards>
+  <Card
+    title="BMAD Method"
+    description="Structured planning and execution methodology for complex tasks."
+    href="/docs/guides/bmad-method"
+  />
+  <Card
+    title="MCP Integration"
+    description="Connect external tools and services via Model Context Protocol."
+    href="/docs/guides/mcp-integration"
+  />
+  <Card
+    title="OpenRouter"
+    description="Use cloud models as fallback when local inference isn't enough."
+    href="/docs/guides/openrouter"
+  />
+  <Card
+    title="Personalization"
+    description="Teach Eight your preferences, patterns, and project context."
+    href="/docs/guides/personalization"
+  />
+  <Card
+    title="Terminal UI"
+    description="The interactive TUI for real-time agent collaboration."
+    href="/docs/guides/tui"
+  />
+</Cards>
+
+## Reference
+
+<Cards>
+  <Card
+    title="Benchmarks"
+    description="39+ task test suite across 6 tiers and 15 professional domains."
+    href="/docs/benchmarks"
+  />
+  <Card
+    title="CLI Reference"
+    description="All commands, flags, and environment variables."
+    href="/docs/reference/cli"
+  />
+  <Card
+    title="Slash Commands"
+    description="In-session commands for controlling agent behavior."
+    href="/docs/reference/slash-commands"
+  />
+  <Card
+    title="Tools"
+    description="Built-in tool definitions and custom tool creation."
+    href="/docs/reference/tools"
+  />
+  <Card
+    title="Hooks"
+    description="Lifecycle hooks for extending agent behavior."
+    href="/docs/reference/hooks"
+  />
+  <Card
+    title="Design Systems"
+    description="Token-based design system for consistent UI output."
+    href="/docs/reference/design-systems"
+  />
+</Cards>
+
+## Community
+
+<Cards>
+  <Card
+    title="Contributing"
+    description="How to contribute benchmarks, patterns, and improvements."
+    href="/docs/contributing"
+  />
+</Cards>

@@ -1,0 +1,91 @@
+---
+title: "Model Router"
+description: "How 8gent routes tasks to the best model using experience-based learning and multi-model fallback"
+---
+
+## Overview
+
+8gent does not use a single model for every task. The model router learns from benchmark results and past sessions to route each task to the model most likely to succeed. Different models excel at different domains, and the router exploits this automatically.
+
+## Experience-Based Routing
+
+The model router maintains an experience database that tracks how each model performs across task categories. After every benchmark run and scored session, the router updates its records.
+
+When a new task arrives, the router:
+
+1. Classifies the task into a domain (auth, data pipeline, frontend, etc.)
+2. Looks up historical performance for each available model in that domain
+3. Routes to the model with the highest recorded score
+4. Falls back to the default model if no experience data exists
+
+## Multi-Model Fallback
+
+8gent supports a fallback chain. If the primary model is unavailable (Ollama down, model not pulled, timeout), the router tries the next option:
+
+```
+qwen3.5 (local, primary)
+    |-- timeout or error
+    v
+devstral:latest (local, fallback)
+    |-- timeout or error
+    v
+auto:free (OpenRouter, cloud fallback)
+```
+
+This is configured in `.8gent/config.json` or happens automatically when using `auto:free` with OpenRouter.
+
+## Benchmark-Driven Routing
+
+The 39+ task benchmark suite provides concrete data for routing decisions. Here is a sample of how different models perform across domains:
+
+| Domain | qwen3.5 | devstral | qwen3:14b |
+|--------|---------|----------|-----------|
+| Auth System (BT001) | 94 | - | 94 |
+| Event Architecture (BT002) | 92 | - | 92 |
+| Data Pipeline (BT003) | - | 100 | - |
+| State Machine (BT005) | 92 | - | 92 |
+| SEO Audit (BT007) | 96 | - | 96 |
+| Video Production (BT011) | 100 | - | 100 |
+
+The router uses this data to make informed decisions. A data engineering task might route to devstral while an auth task routes to qwen3.5.
+
+## Dynamic Free Model Selection
+
+For OpenRouter users, the `getBestFreeModel()` function in `packages/providers/index.ts` queries the OpenRouter API to find the best available free model:
+
+1. Fetches the full model list from `/api/v1/models`
+2. Filters for models with the `:free` suffix
+3. Sorts by context length (longer context = more capable for coding tasks)
+4. Caches results for one hour
+
+This means 8gent always routes to the best free model currently available, even as OpenRouter's free model lineup changes.
+
+## Spawn Agent Routing
+
+The multi-agent orchestration system can spawn subagents with specific model preferences:
+
+```typescript
+spawn_agent({
+  task: "Build the data pipeline",
+  model: "auto:free"  // automatically picks best free model
+});
+```
+
+The `auto:free` identifier triggers dynamic model selection. Subagents inherit the parent's fallback chain unless explicitly overridden.
+
+## Integration with Kernel Fine-Tuning
+
+When the kernel fine-tuning pipeline promotes a new checkpoint (e.g., `eight-1.1-q3:14b`), the model router automatically registers it as the primary model. The promotion only happens when the Gemini Flash judge confirms the fine-tuned model outperforms the current release on the autoresearch benchmark suite.
+
+If a promoted model later shows declining performance (tracked via the kernel's health monitoring), the router can fall back to the previous version automatically.
+
+## Configuration
+
+The model router does not require explicit configuration. It builds its experience database from benchmark runs and kernel scoring. To seed the experience database with benchmark data:
+
+```bash
+# Run benchmarks to populate experience data
+bun run benchmark:v2
+
+# Results feed into the model router automatically
+```

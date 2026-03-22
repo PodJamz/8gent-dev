@@ -1,0 +1,84 @@
+---
+title: "Slash Commands"
+description: "Complete reference for all 8gent slash commands and their aliases"
+---
+
+## Core Commands
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/help` | `/h`, `/?` | Show all available commands |
+| `/clear` | `/cls`, `/c` | Clear the chat screen |
+| `/quit` | `/q`, `/exit` | Exit 8gent |
+| `/status` | `/s`, `/st` | Show session status (model, tokens, duration) |
+
+## Visual Features
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/animations` | `/anim`, `/fx` | Preview ASCII animations (matrix, fire, dna, stars, dots, glitch, confetti, wave, gradient, all) |
+| `/adhd` | `/bionic`, `/focus` | Toggle bionic reading mode. Accepts `on` or `off` arguments |
+| `/kanban` | `/k`, `/board` | Toggle the Kanban board view |
+
+## AI Features
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/model` | `/m` | Select or switch the active LLM model. Accepts any model identifier |
+| `/provider` | `/pr` | Select LLM provider (ollama, openrouter, lmstudio) |
+| `/plan` | `/pl` | Show the current BMAD execution plan |
+| `/predict` | `/p`, `/next` | Show predicted next steps with confidence scores |
+| `/avenues` | `/a`, `/paths` | Show all planned avenues and trade-offs |
+| `/momentum` | | Show execution velocity stats (steps/min, streak) |
+| `/infinite` | `/inf` | Enable autonomous mode (agent works without pausing for confirmation) |
+| `/evidence` | | Show full evidence breakdown for the current session |
+
+## Personalization
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/onboarding` | `/setup`, `/intro` | Start the personalization wizard |
+| `/preferences` | `/prefs`, `/settings` | View or edit preferences |
+| `/voice` | `/v` | Configure voice TTS settings |
+| `/language` | `/lang`, `/l` | Set the response language |
+
+## Skill Management
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `/quarantine` | `/quar`, `/sandbox` | Manage the skill quarantine system |
+| `/toolshed` | `/shed`, `/tools` | Query available tools by capability |
+| `/skills` | `/sk` | List and manage skills |
+
+### Quarantine Subcommands
+
+```bash
+/quarantine add https://github.com/user/skill   # Clone to sandbox
+/quarantine scan skill-123-abc                   # Run security scan
+/quarantine release skill-123-abc                # Release to toolshed
+/quarantine list pending                         # View quarantined skills
+```
+
+## Permission Commands
+
+| Command | Description |
+|---------|-------------|
+| `/permissions` | Show current permission config and stats |
+| `/allow <pattern>` | Add a pattern to the allowed list |
+| `/deny <pattern>` | Add a pattern to the denied list |
+| `/auto-approve` | Toggle auto-approve mode for safe commands |
+
+## Hook Commands
+
+| Command | Description |
+|---------|-------------|
+| `/hooks` | List all registered hooks |
+| `/hooks enable <id>` | Enable a specific hook |
+| `/hooks disable <id>` | Disable a specific hook |
+
+## MCP Commands
+
+| Command | Description |
+|---------|-------------|
+| `/mcp list` | List connected MCP servers and their tools |
+| `/mcp connect <server>` | Manually connect to an MCP server |

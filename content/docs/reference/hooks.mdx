@@ -1,0 +1,200 @@
+---
+title: "Hooks Reference"
+description: "Automate 8gent workflows with hooks that trigger at key points in the agent lifecycle"
+---
+
+## Overview
+
+Hooks run custom code at key points in the agent workflow. They support shell commands, external scripts, and inline JavaScript. Configure hooks in `~/.8gent/hooks.json`.
+
+## Configuration
+
+```json
+{
+  "hooks": [
+    {
+      "id": "hook_123",
+      "type": "onComplete",
+      "name": "Voice Notification",
+      "description": "Speaks completion message via macOS TTS",
+      "mode": "shell",
+      "command": "say -v Moira 'Task completed'",
+      "enabled": true,
+      "async": true,
+      "continueOnError": true
+    }
+  ],
+  "globalTimeout": 30000,
+  "enabled": true
+}
+```
+
+## Hook Types
+
+| Type | Trigger |
+|------|---------|
+| `beforeTool` | Before any tool executes |
+| `afterTool` | After any tool completes |
+| `beforeCommand` | Before a shell command runs |
+| `afterCommand` | After a shell command completes |
+| `onError` | When a tool or command fails |
+| `onComplete` | When a task or conversation finishes |
+| `onStart` | When the agent session starts |
+| `onExit` | When the agent session ends |
+
+## Hook Modes
+
+### Shell Mode
+
+Run shell commands with variable substitution:
+
+```json
+{
+  "mode": "shell",
+  "command": "echo 'Tool {tool} completed in {duration}ms'"
+}
+```
+
+### Script Mode
+
+Run external script files:
+
+```json
+{
+  "mode": "script",
+  "scriptPath": "~/.8gent/hooks/notify.ts"
+}
+```
+
+### Function Mode
+
+Run inline JavaScript:
+
+```json
+{
+  "mode": "function",
+  "functionBody": "console.log('Tool:', context.tool); return 'done';"
+}
+```
+
+## Context Variables
+
+Available in shell mode (via `{variable}`) and function mode (via `context.variable`):
+
+| Variable | Description |
+|----------|-------------|
+| `{tool}` | Current tool name |
+| `{command}` | Shell command being run |
+| `{result}` | Tool or command output |
+| `{error}` | Error message if failed |
+| `{sessionId}` | Current session ID |
+| `{workingDirectory}` | Working directory |
+| `{duration}` | Execution time in milliseconds |
+| `{exitCode}` | Command exit code |
+| `{stdout}` | Command stdout |
+| `{stderr}` | Command stderr |
+
+## Default Hooks
+
+8gent ships with built-in hooks you can enable:
+
+| Name | Type | Description |
+|------|------|-------------|
+| Tool Logger | `afterTool` | Logs tool executions |
+| Command Logger | `afterCommand` | Logs shell commands |
+| Error Logger | `onError` | Logs errors |
+| Execution Timer | `afterTool` | Tracks tool timing |
+| macOS Notification | `onComplete` | Shows a system notification |
+| Voice Notification | `onComplete` | TTS announcement via `say` |
+| Terminal Bell | `onComplete` | Plays the terminal bell |
+| Telegram Notification | `onComplete` | Sends a Telegram message |
+| Auto Git Add | `afterTool` | Stages changed files after writes |
+| Backup Before Edit | `beforeTool` | Backs up files before editing |
+| Command Validator | `beforeCommand` | Warns on dangerous commands |
+| Auto Lint | `afterTool` | Runs linter after file writes |
+
+Enable defaults programmatically:
+
+```typescript
+import { setupNotificationHooks, setupGitHooks } from "8gent-code/hooks/defaults";
+
+setupNotificationHooks(); // macOS notifications
+setupGitHooks();          // auto git staging
+```
+
+## API Usage
+
+```typescript
+import { getHookManager, registerShellHook } from "8gent-code/hooks";
+
+const manager = getHookManager();
+
+// Register a custom hook
+const hook = registerShellHook(
+  "onComplete",
+  "My Notification",
+  "say 'Done: {result}'"
+);
+
+// Execute hooks manually
+await manager.executeHooks("onComplete", {
+  result: "Task finished",
+  duration: 1500
+});
+
+// Disable a hook
+manager.disableHook(hook.id);
+```
+
+## CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `/hooks` | List all registered hooks |
+| `/hooks enable <id>` | Enable a specific hook |
+| `/hooks disable <id>` | Disable a specific hook |
+
+## Examples
+
+### Voice notification on task completion (macOS)
+
+```json
+{
+  "type": "onComplete",
+  "mode": "shell",
+  "command": "say -v Moira 'Task completed'",
+  "async": true
+}
+```
+
+### Telegram notification
+
+```json
+{
+  "type": "onComplete",
+  "mode": "shell",
+  "command": "curl -s -X POST https://api.telegram.org/bot$BOT_TOKEN/sendMessage -d chat_id=$CHAT_ID -d text='8gent: {result}'",
+  "async": true
+}
+```
+
+### Auto-lint after file writes
+
+```json
+{
+  "type": "afterTool",
+  "mode": "shell",
+  "command": "bunx biome check --write .",
+  "continueOnError": true
+}
+```
+
+### Dangerous command warning
+
+```json
+{
+  "type": "beforeCommand",
+  "mode": "function",
+  "functionBody": "if (context.command.includes('rm -rf')) { console.warn('Dangerous command detected!'); }"
+}
+```

@@ -1,0 +1,140 @@
+---
+title: "Benchmarks"
+description: "8gent's 39-task execution-graded benchmark suite across 15 professional domains"
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Accordions, Accordion } from 'fumadocs-ui/components/accordion';
+
+8gent includes a comprehensive benchmark suite with 39+ tasks across 6 tiers spanning 15 professional domains. Every benchmark is execution-graded: code runs against `bun:test` suites or it fails.
+
+<Callout type="info" title="All Local Inference">
+Every score below is from local inference via Ollama at zero cost. No cloud APIs, no paid models.
+</Callout>
+
+---
+
+## The Six Tiers
+
+<Cards>
+  <Card title="Tier 1: Fundamentals" description="5 benchmarks — Bug fixing, feature implementation, file manipulation. Race conditions, memory leaks, null references, LRU caching, input validation." />
+  <Card title="Tier 2: Fullstack" description="3 benchmarks — End-to-end systems: REST API with JWT auth, event-driven pub/sub with dead letter queues, typed state machines with guards." />
+  <Card title="Tier 3: Agentic" description="7 benchmarks — Config parsing, ETL pipelines, reverse engineering, debugging." />
+  <Card title="Tier 4: UI/CSS" description="8 benchmarks — Neumorphic, glassmorphism, 3D, animations, responsive layouts." />
+  <Card title="Tier 5: Long-Horizon" description="9 benchmarks — Three.js rendering, React Native, Next.js server components, creative generation (music, generative art)." />
+  <Card title="Tier 6: Battle Test" description="15 benchmarks — The headline tier. Fifteen professional-domain tasks graded end-to-end." />
+</Cards>
+
+---
+
+## Battle Test Results
+
+The headline tier. Fifteen tasks across professional domains.
+
+| ID | Domain | Task | Score | Status |
+|----|--------|------|------:|--------|
+| BT001 | Software Engineering | SaaS Auth — JWT, Roles, Rate Limiting | 94 | PASS |
+| BT002 | Software Engineering | Event Architecture — Pub/Sub, DLQ, Retry | 92 | PASS |
+| BT003 | Data Engineering | Data Pipeline — Stream Processing, Validation | 100 | PERFECT |
+| BT004 | Developer Tools | CLI Framework — Parser, Help, Flags, Subcommands | 53 | Improving |
+| BT005 | Software Engineering | State Machine — Typed Transitions, Guards | 92 | PASS |
+| BT006 | Financial Consulting | Financial Dashboard — ROI, NPV, IRR, EBITDA | 54 | Improving |
+| BT007 | Digital Marketing | SEO Audit Engine — Meta, Scoring, Core Web Vitals | 96 | PASS |
+| BT008 | Marketing Automation | Email Campaign — Templates, A/B Testing, Analytics | 54 | Improving |
+| BT009 | DevOps | CI/CD Pipeline — DSL, Dependency Graph, YAML | 33 | Improving |
+| BT010 | Design Systems | Design Tokens — Multi-Format Export, Scales | 39 | Improving |
+| BT011 | Video Production | Video Planner — Scene Graph, Timeline, FFmpeg | 100 | PERFECT |
+| BT012 | Music Technology | Music Theory — Notes, Chords, Scales, Progressions | 81 | PASS |
+| BT013 | Data Visualization | Charts, Scales, Layouts in SVG/ASCII | 30 | Improving |
+| BT014 | AI Consulting | Report Generator — Assessment, Roadmap | 95 | PASS |
+| BT015 | Cybersecurity | Security Audit — Scanner, Vuln DB, Reports | 30 | Improving |
+
+---
+
+## Grading Methodology
+
+<Tabs items={['Scoring Formula', 'Temperature Sweep', 'Grading Rubric']}>
+  <Tab value="Scoring Formula">
+    8gent uses AI-based judging via the Vercel AI SDK. Responses are evaluated semantically, not with regex or `.includes()` checks. This handles ambiguity, synonyms, and edge cases correctly.
+
+    | Component | Weight | Method |
+    |-----------|-------:|--------|
+    | **Execution** | 70% | Code is compiled and run against test assertions. Score = passed / total |
+    | **Keywords** | 30% | Domain-specific pattern checks (JWT, topological sort, NPV, etc.) |
+  </Tab>
+  <Tab value="Temperature Sweep">
+    Each benchmark runs at three temperatures: **0.3**, **0.5**, and **0.7**. The best result is kept. This accounts for the inherent variance in local LLM inference.
+  </Tab>
+  <Tab value="Grading Rubric">
+    All benchmarks are scored on a 100-point scale.
+
+    | Criteria | Weight | Description |
+    |----------|-------:|-------------|
+    | Correctness | 40% | Does the code solve the problem? |
+    | Code Quality | 25% | Clean, readable, idiomatic code |
+    | Efficiency | 20% | Algorithmic and resource efficiency |
+    | Best Practices | 15% | Error handling, edge cases, patterns |
+  </Tab>
+</Tabs>
+
+---
+
+## Running Benchmarks
+
+```bash
+# Single pass (all benchmarks)
+bun run benchmark:v2
+
+# Autoresearch loop (iterative improvement)
+CATEGORY=battle-test MAX_ITERATIONS=5 bun run benchmark:loop
+
+# Overnight continuous runner (all categories)
+bash benchmarks/autoresearch/overnight-runner.sh
+```
+
+Results are logged to `benchmarks/results.tsv` in TSV format:
+
+```
+iteration  benchmark_id  claude_baseline  8gent_score  gap  status  action
+1          BF001         95               100          -5   improved  none
+1          BF002         92               50           42   regressed pattern added
+```
+
+---
+
+## Adding New Benchmarks
+
+<Steps>
+  <Step>
+    ### Create a fixture
+
+    Add your test fixture in `benchmarks/fixtures/<category>/` with the problem statement and expected behavior.
+  </Step>
+  <Step>
+    ### Define the benchmark
+
+    Add the benchmark definition to `benchmarks/categories/<category>/benchmarks.ts` with grading criteria matching the rubric.
+  </Step>
+  <Step>
+    ### Establish baselines
+
+    Run the harness to generate initial scores and confirm the benchmark is correctly graded.
+  </Step>
+</Steps>
+
+---
+
+## Checkpoint Validation
+
+<Callout type="info" title="Regression Gate">
+The benchmark suite also serves as the regression gate for kernel fine-tuning. When the `@8gent/kernel` package trains a new LoRA checkpoint, it validates against these benchmarks before promotion.
+</Callout>
+
+```bash
+bun run benchmarks/autoresearch/validate-checkpoint.ts
+```
+
+See [Kernel Fine-Tuning](/docs/architecture/kernel-finetuning) for the full pipeline.

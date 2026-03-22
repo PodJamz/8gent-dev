@@ -1,0 +1,6 @@
+node_modules
+.next
+out
+.source
+.env
+.env.local
