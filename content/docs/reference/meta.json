@@ -1,0 +1,10 @@
+{
+  "title": "Reference",
+  "pages": [
+    "cli",
+    "slash-commands",
+    "tools",
+    "design-systems",
+    "hooks"
+  ]
+}

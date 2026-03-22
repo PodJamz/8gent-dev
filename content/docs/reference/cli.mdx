@@ -1,0 +1,118 @@
+---
+title: "CLI Reference"
+description: "Command-line interface for launching and configuring 8gent"
+---
+
+## Commands
+
+8gent provides two entry points: the full command `8gent` and the short alias `8`.
+
+### Launch the TUI
+
+```bash
+# Full command
+8gent
+
+# Short alias
+8
+
+# Via Bun directly (from the repo)
+bun run tui
+```
+
+### Specify a Provider
+
+```bash
+# Use OpenRouter instead of local Ollama
+8gent --provider openrouter
+
+# Use LM Studio
+8gent --provider lmstudio
+```
+
+### Auth Commands
+
+8gent includes Clerk-based authentication for syncing sessions and preferences. Auth is optional. The agent works fully offline without logging in.
+
+```bash
+# Log in via device code flow
+8gent auth login
+
+# Log out
+8gent auth logout
+
+# Check current auth status
+8gent auth status
+
+# Show current user info
+8gent auth whoami
+```
+
+Tokens are stored in the macOS Keychain when available, with an AES-256-GCM encrypted file fallback on other platforms.
+
+### AST Commands
+
+Query code structure without reading entire files:
+
+```bash
+# Show file outline (all symbols with signatures)
+8gent outline src/parser.ts
+
+# Get a specific symbol's source
+8gent symbol src/parser.ts::buildSymbolId
+```
+
+### Benchmark Commands
+
+```bash
+# Run the full benchmark suite
+bun run benchmark:v2
+
+# Run autoresearch loop
+CATEGORY=battle-test MAX_ITERATIONS=5 bun run benchmark:loop
+
+# Overnight runner
+bash benchmarks/autoresearch/overnight-runner.sh
+
+# Validate a kernel fine-tuning checkpoint
+bun run benchmarks/autoresearch/validate-checkpoint.ts
+```
+
+### Harness CLI
+
+The harness CLI (`packages/harness-cli/`) provides headless session management:
+
+```bash
+# Run a session headlessly
+harness run "Build a REST API"
+
+# Inspect a past session
+harness inspect <session-id>
+
+# Check system health
+harness doctor
+
+# List recent sessions
+harness sessions
+```
+
+## Configuration Paths
+
+| Path | Purpose |
+|------|---------|
+| `.8gent/config.json` | Project-level configuration |
+| `~/.8gent/config.json` | Global configuration (overridden by project) |
+| `~/.8gent/permissions.json` | Command permission rules |
+| `~/.8gent/hooks.json` | Automation hooks |
+| `.8gent/mcp.json` | MCP server configuration |
+| `~/.8gent/personal-lora/` | Personal LoRA adapter (kernel fine-tuning) |
+| `~/.8gent/kernel/` | Kernel score history and training state |
+
+## Environment Variables
+
+| Variable | Purpose | Required |
+|----------|---------|----------|
+| `OPENROUTER_API_KEY` | API key for OpenRouter cloud models | Only for OpenRouter provider |
+| `TRAINING_PROXY_URL` | Training proxy URL override | Only for kernel fine-tuning |
+| `OLLAMA_HOST` | Override default Ollama URL (localhost:11434) | No |
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | For GitHub MCP server | Only for GitHub integration |

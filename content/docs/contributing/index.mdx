@@ -1,0 +1,124 @@
+---
+title: "Contributing"
+description: "How to contribute to 8gent Code: philosophy, code standards, and workflow"
+---
+
+## Philosophy
+
+8gent is built on a few core principles:
+
+1. **Local-first.** The agent should work entirely offline with local LLMs. Cloud features (OpenRouter, auth, sync) are optional enhancements, never requirements.
+
+2. **Token efficiency.** Every design decision considers token cost. AST-first navigation, toolshed capability discovery, and compact system prompts all serve this goal.
+
+3. **Execution over knowledge.** Models that know patterns but cannot produce running code are not good enough. Benchmarks are execution-graded - code compiles and passes tests, or it fails.
+
+4. **Self-improvement.** The autoresearch pipeline and kernel fine-tuning create feedback loops where the system gets better automatically.
+
+## Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/PodJamz/8gent-code.git
+cd 8gent-code
+
+# Install dependencies
+bun install
+
+# Launch the TUI
+bun run tui
+
+# Run the benchmark suite
+bun run benchmark:v2
+```
+
+## Code Standards
+
+### Runtime
+
+8gent uses **Bun** exclusively. No Node.js-specific APIs. All scripts, tests, and the TUI run through Bun.
+
+### TUI Rules
+
+The TUI follows strict design system rules:
+
+- **No raw `<Text>` or `<Box>` in screens.** Use primitives from `apps/tui/src/components/primitives/`.
+- **No forbidden colors.** Never use `color="gray"`, `color="white"`, or `color="black"` - they break on certain terminal themes. Use `dimColor` for muted text, `bold` for emphasis.
+- **Safe named colors:** `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`.
+- **Formatting in `lib/`.** Use `formatTokens()`, `formatDuration()`, `truncate()` - never inline formatting logic.
+
+### AI Judging
+
+Never use string matching (regex, `.includes()`) to evaluate agent output. Always use the Vercel AI SDK as a judge - call a model with a structured prompt for semantic evaluation.
+
+### Versioning
+
+Version lives in three places that must stay in sync:
+
+1. `package.json` - source of truth
+2. `bin/8gent.ts` - `const VERSION`
+3. `README.md` - version badge
+
+Follow SemVer strictly:
+- **PATCH** (0.x.1): Bug fixes, minor tweaks
+- **MINOR** (0.x.0): New features, benchmarks, packages
+- **MAJOR** (x.0.0): Breaking changes to CLI, session format, or API
+
+### Changelog
+
+Every PR must update `CHANGELOG.md`. Follow [Keep a Changelog](https://keepachangelog.com/) format. Add entries under `[Unreleased]` or create a new version section.
+
+## Contribution Workflow
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/amazing`)
+3. Make your changes following the code standards above
+4. Run benchmarks to verify nothing regresses (`bun run benchmark:v2`)
+5. Update `CHANGELOG.md` with your changes
+6. Commit and push
+7. Open a Pull Request
+
+## Project Structure
+
+```
+8gent-code/
+|-- apps/
+|   |-- tui/            # Terminal UI (Ink v6)
+|   |-- clui/           # Desktop overlay (Tauri 2.0)
+|   |-- dashboard/      # Admin panel (Next.js)
+|   |-- debugger/       # Session debugger
+|-- packages/
+|   |-- eight/          # Core agent engine
+|   |-- ast-index/      # AST parsing
+|   |-- mcp/            # MCP client
+|   |-- lsp/            # LSP client
+|   |-- planning/       # BMAD planner
+|   |-- kernel/         # RL fine-tuning
+|   |-- toolshed/       # Tool registry
+|   |-- validation/     # Evidence collection
+|   |-- hooks/          # Hook system
+|   |-- permissions/    # Permission system
+|   |-- tools/          # Web, PDF, image tools
+|   |-- personality/    # Brand voice
+|   |-- auth/           # Clerk auth
+|   |-- db/             # Convex database
+|   |-- voice/          # Whisper STT
+|   |-- ai/             # Vercel AI SDK
+|   |-- types/          # Shared types
+|-- benchmarks/
+|   |-- autoresearch/   # Self-improving harness
+|   |-- categories/     # 6 tiers, 39+ tasks
+|-- config/
+|   |-- training.yaml   # RL training configuration
+|-- docs/
+|   |-- bmad/           # Planning documents
+```
+
+## Areas to Contribute
+
+- **Benchmarks** - Add new benchmark categories or improve existing ones
+- **Tool implementations** - New tools for the toolshed
+- **MCP servers** - Custom MCP server integrations
+- **TUI components** - New primitives, animations, or visualizations
+- **Model support** - Test and document performance with new models
+- **Documentation** - Improve guides and reference docs

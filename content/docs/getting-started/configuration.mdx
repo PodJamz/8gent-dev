@@ -1,0 +1,187 @@
+---
+title: Configuration
+description: Configure 8gent models, providers, permissions, and hooks via .8gent/config.json.
+---
+
+## Configuration File
+
+8gent reads its configuration from `.8gent/config.json` in your project root. A global configuration can also be placed at `~/.8gent/config.json`. Project-level settings override global ones.
+
+```json
+{
+  "model": "qwen3.5",
+  "provider": "ollama",
+  "ollamaUrl": "http://localhost:11434",
+  "temperature": 0.7,
+  "trainingProxy": {
+    "enabled": false,
+    "proxyUrl": "http://localhost:30000",
+    "autoStart": false
+  }
+}
+```
+
+## Model Selection
+
+8gent supports any model available through Ollama or OpenRouter. Use the `/model` command in the TUI to switch models interactively, or set the default in your config:
+
+```json
+{
+  "model": "qwen3.5"
+}
+```
+
+### Recommended Models
+
+| Model | Size | Use Case |
+|-------|------|----------|
+| `qwen3.5` | ~18GB VRAM | Recommended - strong upstream coding performance |
+| `devstral:latest` | ~14GB VRAM | Alternative - good benchmark diversity |
+| `qwen3:14b` | ~12GB VRAM | Alternative - stronger reasoning, larger model |
+
+The `/model` command accepts any arbitrary model identifier. If the model is available in your Ollama instance, 8gent will use it.
+
+## Provider Configuration
+
+8gent supports three providers: Ollama (local), OpenRouter (cloud), and LM Studio (local).
+
+```json
+{
+  "provider": "ollama",
+  "ollamaUrl": "http://localhost:11434"
+}
+```
+
+### Ollama (Default)
+
+Runs models locally. No API key needed. Ollama must be running on the configured URL.
+
+### OpenRouter
+
+Access free and paid cloud models. Set your API key as an environment variable:
+
+```bash
+export OPENROUTER_API_KEY=sk-or-your-key-here
+```
+
+Then configure the provider:
+
+```json
+{
+  "provider": "openrouter"
+}
+```
+
+8gent's dynamic model router can automatically select the best available free model:
+
+```json
+{
+  "provider": "openrouter",
+  "model": "auto:free"
+}
+```
+
+See the [OpenRouter guide](/docs/guides/openrouter) for details on available free models.
+
+### LM Studio
+
+If you prefer LM Studio over Ollama:
+
+```json
+{
+  "provider": "lmstudio",
+  "lmStudioUrl": "http://localhost:1234"
+}
+```
+
+## Permissions
+
+Permissions control which shell commands 8gent can execute without asking. Stored at `~/.8gent/permissions.json`:
+
+```json
+{
+  "allowedPatterns": ["npm *", "bun *", "git *", "ls *", "cat *"],
+  "deniedPatterns": ["rm -rf /", "sudo rm -rf"],
+  "autoApprove": false,
+  "logPath": "~/.8gent/logs/permissions.log"
+}
+```
+
+Dangerous commands (like `rm -rf`, `sudo`, `git push --force`) always require explicit approval regardless of your allowed patterns. Safe patterns like `git status`, `bun run`, and `eslint` are auto-approved by default.
+
+Use `/permissions` in the TUI to view current settings, `/allow <pattern>` to add safe patterns, and `/deny <pattern>` to block patterns.
+
+## Hooks
+
+Hooks run custom code at key points in the agent workflow. Configure them in `~/.8gent/hooks.json`:
+
+```json
+{
+  "hooks": [
+    {
+      "type": "onComplete",
+      "name": "Voice Notification",
+      "mode": "shell",
+      "command": "say -v Moira 'Task completed'",
+      "enabled": true,
+      "async": true
+    }
+  ],
+  "globalTimeout": 30000,
+  "enabled": true
+}
+```
+
+Hook types include `beforeTool`, `afterTool`, `beforeCommand`, `afterCommand`, `onError`, `onComplete`, `onStart`, and `onExit`. See the [Hooks reference](/docs/reference/hooks) for full documentation.
+
+## MCP Servers
+
+Connect external tools via the Model Context Protocol. Store MCP server configurations in `.8gent/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "./data.db"]
+    }
+  }
+}
+```
+
+See the [MCP Integration guide](/docs/guides/mcp-integration) for setup instructions.
+
+## Kernel Fine-Tuning
+
+The RL fine-tuning pipeline is off by default. Enable it to let 8gent continuously improve its local model from your coding sessions:
+
+```json
+{
+  "trainingProxy": {
+    "enabled": true,
+    "proxyUrl": "http://localhost:30000",
+    "autoStart": false
+  }
+}
+```
+
+This routes Ollama calls through the training proxy, which collects training data and scores responses with a judge model. See the [Kernel Fine-Tuning architecture](/docs/architecture/kernel-finetuning) page for details.
+
+## Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENROUTER_API_KEY` | API key for OpenRouter cloud models |
+| `TRAINING_PROXY_URL` | Override training proxy URL |
+| `OLLAMA_HOST` | Override default Ollama URL |

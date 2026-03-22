@@ -1,0 +1,103 @@
+---
+title: "OpenRouter"
+description: "Use free cloud models via OpenRouter when you do not have a local GPU"
+---
+
+## Why OpenRouter?
+
+Not everyone has a GPU capable of running local models. OpenRouter provides access to free and paid cloud models through a unified API. 8gent's dynamic model router can automatically select the best available free model, keeping your costs at zero.
+
+## Setup
+
+### 1. Get an API Key
+
+Sign up at [openrouter.ai](https://openrouter.ai) and create an API key. Even for free models, you need a key for rate limiting and usage tracking.
+
+### 2. Set the Environment Variable
+
+```bash
+export OPENROUTER_API_KEY=sk-or-your-key-here
+```
+
+Add this to your shell profile (`~/.zshrc`, `~/.bashrc`) so it persists across sessions.
+
+### 3. Configure 8gent
+
+Switch to OpenRouter via the TUI:
+
+```
+/provider openrouter
+```
+
+Or set it in `.8gent/config.json`:
+
+```json
+{
+  "provider": "openrouter",
+  "model": "auto:free"
+}
+```
+
+The `auto:free` model identifier tells 8gent to dynamically select the best available free model.
+
+## Available Free Models
+
+8gent queries OpenRouter's API to find models with the `:free` suffix. These are currently available at no cost:
+
+| Model | Strengths |
+|-------|-----------|
+| `openrouter/auto` | Smart routing to best free model |
+| `qwen/qwen3-coder-480b:free` | Top-tier coding performance |
+| `meta-llama/llama-3.3-70b-instruct:free` | Strong general purpose |
+| `google/gemma-3-27b-it:free` | Efficient mid-size model |
+| `deepseek/deepseek-chat-v3-0324:free` | DeepSeek V3, strong at reasoning |
+
+Free model availability changes over time. 8gent's `getBestFreeModel()` function in `packages/providers/index.ts` queries the OpenRouter API, filters for free models, and sorts by context length. Results are cached for one hour.
+
+## Dynamic Model Router
+
+8gent includes an experience-based model router that learns which models perform best for different task types. When you use `auto:free`, the router:
+
+1. Queries OpenRouter for available free models
+2. Checks its experience database for domain-specific performance data
+3. Routes to the model with the best track record for the current task type
+
+This means 8gent might use one model for data pipeline tasks and a different one for frontend work, based on past benchmark results.
+
+## Hybrid Setup: Local + Cloud Fallback
+
+The recommended setup combines local inference with cloud fallback:
+
+```json
+{
+  "provider": "ollama",
+  "model": "qwen3.5",
+  "fallback": {
+    "provider": "openrouter",
+    "model": "auto:free"
+  }
+}
+```
+
+With this configuration, 8gent uses your local model by default and falls back to a free cloud model if Ollama is unavailable or the local model times out.
+
+## Multi-Model Benchmarks
+
+The benchmark suite demonstrates that different models excel at different domains:
+
+| Domain | Best Free Model | Score |
+|--------|----------------|-------|
+| Data Pipeline (BT003) | devstral | 100 |
+| Auth System (BT001) | qwen3.5 | 94 |
+| SEO Audit (BT007) | qwen3.5 | 96 |
+| Video Production (BT011) | qwen3.5 | 100 |
+
+The model router uses these results to make informed routing decisions.
+
+## Cost
+
+Free models on OpenRouter have rate limits but no per-token charges. For heavier usage, OpenRouter offers paid models with higher rate limits and better availability. 8gent works with any model available through the OpenRouter API - simply specify its full identifier:
+
+```
+/model anthropic/claude-sonnet-4
+```

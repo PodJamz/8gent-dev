@@ -1,0 +1,103 @@
+---
+title: Quick Start
+description: Your first coding session with 8gent in under 5 minutes.
+---
+
+## Launch 8gent
+
+Start the TUI from any project directory:
+
+```bash
+# Full command
+8gent
+
+# Short alias
+8
+
+# Or run directly with Bun
+cd 8gent-code && bun run tui
+```
+
+8gent opens with a chat interface. The status bar at the bottom shows your active model, current git branch, and session mode.
+
+## Your First Task
+
+Type a coding task in natural language. 8gent will plan the work using the BMAD method, then execute it step by step.
+
+```
+> Build a REST API with Express that has user CRUD endpoints and input validation
+```
+
+8gent will:
+
+1. **Plan** - Break the task into numbered steps using BMAD planning
+2. **Execute** - Write files, run commands, and install dependencies
+3. **Verify** - Collect evidence that the code works (type checks, test runs, server starts)
+4. **Report** - Summarize what was done with a completion report
+
+You can watch the Kanban board update in real time by pressing `/kanban` during execution.
+
+## Basic Interactions
+
+### Chat Naturally
+
+8gent understands conversational requests. You do not need special syntax for most tasks:
+
+```
+> Fix the TypeScript errors in src/auth.ts
+> Add dark mode support to the settings page
+> Refactor the database module to use connection pooling
+```
+
+### Use Slash Commands
+
+Slash commands control the TUI and agent behavior:
+
+| Command | What it does |
+|---------|-------------|
+| `/help` | Show all available commands |
+| `/model` | Switch the active LLM model |
+| `/plan` | View the current execution plan |
+| `/kanban` | Toggle the Kanban board view |
+| `/adhd` | Toggle bionic reading mode |
+| `/status` | Show session stats |
+| `/clear` | Clear the chat history |
+| `/quit` | Exit 8gent |
+
+### Ghost Suggestions
+
+As you type, 8gent shows dim ghost text predicting your next command. These suggestions are context-aware:
+
+- **Git-aware** - Suggests commits when you are on a branch with changes
+- **Plan-aware** - Shows the next step from the active plan
+- **History-aware** - Learns from your recent commands
+
+Press **Tab** to accept a suggestion, or **Esc** to dismiss it.
+
+## Working with Files
+
+8gent can read, write, and edit files in your project. It uses AST-first navigation to minimize token usage, fetching only the symbols it needs rather than reading entire files.
+
+```
+> Show me the outline of src/parser.ts
+> What does the buildSymbolId function do?
+> Add error handling to the processData function in src/utils.ts
+```
+
+When 8gent writes or edits files, it collects evidence (type checks, lint results) to verify the changes are correct. You will see pass/fail badges appear in the chat stream.
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| **Tab** | Accept ghost suggestion |
+| **Esc** | Dismiss suggestion |
+| **Ctrl+T** | Cycle agent mode (Planning, Researching, Implementing, Testing, Debugging) |
+| **Ctrl+B** | Toggle process sidebar |
+| **Up/Down** | Navigate command history |
+
+## Next Steps
+
+- [Configuration](/docs/getting-started/configuration) - Customize models, providers, and behavior
+- [BMAD Method](/docs/guides/bmad-method) - Understand 8gent's structured planning approach
+- [TUI Guide](/docs/guides/tui) - Master the terminal interface

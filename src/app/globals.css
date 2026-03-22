@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* 8gent Design System - Light/Dark */
+
+/* Light mode (warm cream per BRAND.md) */
+:root {
+  --surface-0: #FFFDF9;
+  --surface-1: #FFF8F0;
+  --surface-2: #FFF3E8;
+  --surface-3: #F0EBE5;
+  --surface-card: #FFFFFF;
+
+  --text-primary: #1A1612;
+  --text-secondary: #5C544A;
+  --text-tertiary: #9A9088;
+  --text-muted: #9A9088;
+
+  --border-subtle: #E8E0D6;
+  --border-default: rgba(26, 22, 20, 0.12);
+  --border-strong: rgba(26, 22, 20, 0.24);
+
+  --accent: #E8610A;
+  --accent-hover: #CC5508;
+  --accent-subtle: rgba(232, 97, 10, 0.08);
+
+  --font-serif: "Fraunces", "Georgia", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+}
+
+/* Dark mode (BRAND.md tokens) */
+.dark {
+  --surface-0: #0A0908;
+  --surface-1: #12100E;
+  --surface-2: #1C1A17;
+  --surface-3: #252220;
+  --surface-card: #12100E;
+
+  --text-primary: #FAF7F4;
+  --text-secondary: #C8C2BA;
+  --text-tertiary: #8A8078;
+  --text-muted: #8A8078;
+
+  --border-subtle: #2E2A26;
+  --border-default: rgba(250, 247, 244, 0.12);
+  --border-strong: rgba(250, 247, 244, 0.24);
+
+  --accent: #F07A28;
+  --accent-hover: #E8610A;
+  --accent-subtle: rgba(240, 122, 40, 0.08);
+}
+
+body {
+  background-color: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: rgba(232, 97, 10, 0.2);
+  color: var(--text-primary);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background-color: var(--surface-2);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #CC5508 0%, #E8610A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, #E8610A 0%, #F07A28 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }

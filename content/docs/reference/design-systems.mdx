@@ -1,0 +1,121 @@
+---
+title: "Design Systems"
+description: "8gent's 54-theme design system database, animation library, and radiant pattern system"
+---
+
+## Overview
+
+8gent ships with a curated design system database containing 54 themes, animation patterns, and a full token-based design architecture. The agent never relies solely on LLM taste for visual decisions - it consults the design system before building any UI.
+
+## Design System Database
+
+The `packages/design-systems/` package provides a SQLite-backed registry of curated design systems, queryable by style, mood, or project type.
+
+### What's in the Database
+
+- **54 themes** spanning minimal, brutalist, glassmorphism, neumorphic, editorial, dashboard, and more
+- **97 color palettes** with accessibility-tested contrast ratios
+- **57 font pairings** organized by mood and readability
+- **99 UX guidelines** covering interaction patterns, navigation, and feedback
+- **9 technology stacks** with framework-specific implementation patterns
+
+### Querying the Database
+
+The design system can be queried by:
+
+- **Style** - minimal, brutalist, editorial, dashboard, etc.
+- **Mood** - professional, playful, serious, elegant, bold
+- **Project type** - SaaS, portfolio, docs, e-commerce, mobile app
+- **Color family** - warm, cool, neutral, monochrome
+
+## TUI Theme Architecture
+
+The terminal UI uses a token-based design system with three layers:
+
+### 1. Design Tokens
+
+Raw values for color, spacing, and typography. Located at `apps/tui/src/theme/tokens.ts`.
+
+### 2. Semantic Layer
+
+Maps tokens to meaning. Located at `apps/tui/src/theme/semantic.ts`.
+
+| Purpose | Token |
+|---------|-------|
+| Secondary/muted text | `dimColor` |
+| Primary emphasis | `bold` |
+| Brand/assistant | `cyan` |
+| User text | `yellow` |
+| Success | `green` |
+| Error | `red` |
+| Warning | `yellow` |
+| Accent | `magenta` |
+| Info/borders | `blue` |
+
+### 3. Primitive Components
+
+Pre-built components that enforce design consistency:
+
+| Component | Purpose |
+|-----------|---------|
+| `AppText` | Base text with theme awareness |
+| `MutedText` | De-emphasized text |
+| `Badge` | Status indicators |
+| `Card` | Content containers |
+| `Stack` | Vertical layout |
+| `Inline` | Horizontal layout |
+| `Divider` | Visual separators |
+| `StatusDot` | State indicators |
+
+## Animation Library
+
+8gent includes animation patterns for both terminal and web contexts:
+
+- **Staggered entrance** - elements appear sequentially with configurable delay
+- **Smooth transitions** - state changes animate between values
+- **Number counters** - values animate to their target
+- **Loading states** - spinners, progress bars, and skeleton screens
+
+### Web Artifact Rules
+
+All HTML presentations and customer-facing artifacts follow these rules:
+
+- Mobile-first responsive design (375px baseline)
+- Touch-friendly with 44px minimum touch targets
+- Animated - static output is not acceptable
+- `clamp()` for all font sizes and spacing (no fixed pixel values)
+- Tables wrapped in horizontal scroll containers on mobile
+- Single column grids below 600px
+
+## Available Design Skills
+
+These specialized design skills can be consulted for specific contexts:
+
+| Skill | Focus |
+|-------|-------|
+| **DesignExcellence** | Design tokens, accessibility, modern UI patterns |
+| **ui-ux-pro-max** | Comprehensive style, palette, font, and UX reference |
+| **web-design-guidelines** | Web Interface Guidelines compliance |
+| **frontend-design** | Production-grade frontend with high design quality |
+| **theme-factory** | 10 pre-set themes for rapid prototyping |
+| **canvas-design** | Visual art generation (PNG/PDF) |
+| **sleek-design-mobile-apps** | Mobile app design patterns |
+
+## Terminal Color Safety
+
+Terminal users have wildly different themes (dark, light, Solarized, etc.). The design system enforces these rules:
+
+**Never use:**
+- `gray` - maps to ANSI bright-black, invisible on Solarized Dark
+- `white` - invisible on light backgrounds
+- `black` - invisible on dark backgrounds
+
+**Safe named colors:** `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`
+
+**Hex/RGB colors** are acceptable for decorative animations (rainbow, gradients) but never for readable text - they degrade unpredictably on terminals without truecolor support.
+
+## Design Protocol
+
+1. **Before building any UI component:** Query the design systems DB or check TUI primitives. Don't reinvent what exists.
+2. **Before choosing colors/fonts:** Consult the theme tokens or ui-ux-pro-max. Don't guess.
+3. **Before shipping UI:** Run web-design-guidelines review. Don't skip accessibility.

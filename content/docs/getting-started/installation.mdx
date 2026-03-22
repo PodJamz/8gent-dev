@@ -1,0 +1,131 @@
+---
+title: Installation
+description: Install 8gent Code and its dependencies to start coding with local LLMs.
+---
+
+## Prerequisites
+
+8gent runs on your local machine using Bun as its runtime and Ollama for local LLM inference. You need three things installed before starting.
+
+### 1. Install Bun
+
+Bun is a fast JavaScript runtime that 8gent uses for everything from the TUI to benchmarks.
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+Verify the installation:
+
+```bash
+bun --version
+```
+
+### 2. Install Ollama
+
+Ollama manages local LLM models. Download it from [ollama.ai](https://ollama.ai) or install via Homebrew on macOS:
+
+```bash
+brew install ollama
+```
+
+Start the Ollama service:
+
+```bash
+ollama serve
+```
+
+### 3. Pull a Model
+
+Any capable coding model works. Start with one of these:
+
+```bash
+# Recommended starting model
+ollama pull qwen3.5
+
+# Alternative: good benchmark diversity
+ollama pull devstral:latest
+
+# Alternative: larger, stronger reasoning
+ollama pull qwen3:14b
+```
+
+The fine-tuned `eight-1.0-q3:14b` model is available as a preview (trained via 8gent's autoresearch pipeline). Pull it if you want to test the latest checkpoint.
+
+If you do not have a local GPU, see the [OpenRouter guide](/docs/guides/openrouter) for free cloud model access.
+
+## Install 8gent
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/PodJamz/8gent-code.git
+cd 8gent-code
+bun install
+```
+
+### Create a Global Command
+
+Set up `8gent` (and its short alias `8`) as a global command:
+
+```bash
+mkdir -p ~/.local/bin
+ln -sf "$(pwd)/apps/tui/src/index.tsx" ~/.local/bin/8gent
+chmod +x ~/.local/bin/8gent
+```
+
+Add `~/.local/bin` to your PATH if it is not already there:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+## Verify Installation
+
+Run the following checks to confirm everything is working:
+
+```bash
+# Check Bun
+bun --version
+
+# Check Ollama is running and has a model
+ollama list
+
+# Launch 8gent
+8gent
+```
+
+You should see the 8gent TUI appear with its splash animation. If Ollama is not running, 8gent will show a connection error in the status bar.
+
+## Troubleshooting
+
+### Ollama connection refused
+
+Make sure the Ollama service is running:
+
+```bash
+ollama serve
+```
+
+By default, Ollama listens on `http://localhost:11434`. If you have changed the port, update your 8gent configuration accordingly.
+
+### Model not found
+
+If 8gent reports a missing model, pull it explicitly:
+
+```bash
+ollama pull qwen3.5
+```
+
+### Permission denied on 8gent command
+
+Ensure the symlink target is executable:
+
+```bash
+chmod +x ~/.local/bin/8gent
+```
+
+## Next Steps
+
+Head to the [Quick Start](/docs/getting-started/quick-start) guide to run your first coding session.
