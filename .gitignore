@@ -4,3 +4,4 @@ out
 .source
 .env
 .env.local
+.vercel

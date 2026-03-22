@@ -3,78 +3,7 @@
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { EcosystemFooter } from "@/components/ecosystem-footer";
-import {
-  Terminal,
-  Cpu,
-  Brain,
-  Shield,
-  GitBranch,
-  Mic,
-  Search,
-  Globe,
-} from "lucide-react";
-
-const ABILITIES = [
-  {
-    icon: Brain,
-    name: "Memory",
-    stat: "30-day decay with frequency-based promotion",
-    detail: "SQLite + FTS5 persistent recall with semantic search",
-  },
-  {
-    icon: GitBranch,
-    name: "Worktree",
-    stat: "4 concurrent agents in isolated git worktrees",
-    detail: "Parallel execution with filesystem-based messaging",
-  },
-  {
-    icon: Shield,
-    name: "Policy",
-    stat: "11 default rules gate every destructive operation",
-    detail: "YAML policy engine with approval gates",
-  },
-  {
-    icon: Cpu,
-    name: "Evolution",
-    stat: "Bayesian skill confidence scoring per session",
-    detail: "Post-session reflection and self-improvement",
-  },
-  {
-    icon: Terminal,
-    name: "Healing",
-    stat: "Atomic git-stash checkpoints before risky ops",
-    detail: "Checkpoint-verify-revert loop with failure logging",
-  },
-  {
-    icon: Search,
-    name: "AST",
-    stat: "97% token reduction vs reading whole files",
-    detail: "Blast radius estimation before any edit",
-  },
-  {
-    icon: Mic,
-    name: "Voice",
-    stat: "Half-duplex voice chat with local whisper.cpp",
-    detail: "Speak, transcribe, think, speak back",
-  },
-  {
-    icon: Globe,
-    name: "Browser",
-    stat: "Lightweight fetch + DuckDuckGo scraping",
-    detail: "No headless browser deps, disk cache",
-  },
-];
-
-const BENCHMARKS = [
-  { domain: "Auth", score: 94 },
-  { domain: "Events", score: 92 },
-  { domain: "Data Pipeline", score: 100 },
-  { domain: "State Machine", score: 92 },
-  { domain: "SEO", score: 96 },
-  { domain: "Video", score: 100 },
-  { domain: "Music Theory", score: 81 },
-  { domain: "AI Consulting", score: 95 },
-];
+import { Terminal, BookOpen, GitBranch } from "lucide-react";
 
 const stagger = {
   hidden: {},
@@ -82,8 +11,8 @@ const stagger = {
 };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 export default function Home() {
@@ -96,7 +25,8 @@ export default function Home() {
           top: 0,
           zIndex: 50,
           backdropFilter: "blur(12px)",
-          backgroundColor: "color-mix(in srgb, var(--surface-0) 80%, transparent)",
+          backgroundColor:
+            "color-mix(in srgb, var(--surface-0) 80%, transparent)",
           borderBottom: "1px solid var(--border-subtle)",
         }}
       >
@@ -148,358 +78,293 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* Hero - utility, not marketing */}
       <motion.section
         initial="hidden"
         animate="visible"
         variants={stagger}
         style={{
-          maxWidth: 900,
+          maxWidth: 720,
           margin: "0 auto",
-          padding: "clamp(48px, 10vw, 120px) 24px 80px",
-          textAlign: "center",
+          padding: "clamp(48px, 8vw, 100px) 24px 64px",
         }}
       >
-        <motion.p
-          variants={fadeUp}
-          style={{
-            fontSize: 13,
-            fontFamily: "var(--font-mono)",
-            color: "var(--accent)",
-            marginBottom: 16,
-            letterSpacing: 1,
-            textTransform: "uppercase",
-          }}
-        >
-          Open Source Coding Agent
-        </motion.p>
-
-        {/* A-grade headline (Hormozi score: 82/100) */}
         <motion.h1
           variants={fadeUp}
           style={{
             fontFamily: "var(--font-serif)",
             fontWeight: 800,
-            fontSize: "clamp(28px, 5vw, 52px)",
-            lineHeight: 1.15,
+            fontSize: "clamp(28px, 5vw, 44px)",
+            lineHeight: 1.2,
             color: "var(--text-primary)",
-            marginBottom: 24,
+            marginBottom: 16,
           }}
         >
-          I tested 39 coding benchmarks on free local models.{" "}
-          <span className="gradient-text">8 scored above 90.</span>
+          8gent Code
         </motion.h1>
 
-        {/* B-grade subheadline (78/100) */}
         <motion.p
           variants={fadeUp}
           style={{
-            fontSize: "clamp(16px, 2.5vw, 20px)",
+            fontSize: "clamp(16px, 2.5vw, 19px)",
             color: "var(--text-secondary)",
-            maxWidth: 640,
-            margin: "0 auto 40px",
             lineHeight: 1.6,
+            marginBottom: 40,
           }}
         >
-          8 core abilities. 250 execution tests. Code compiles or the score is
-          zero. Runs on your laptop, costs nothing.
+          Open source autonomous coding agent. Runs on local LLMs via Ollama.
+          No API keys required, no usage caps, no cloud dependency.
         </motion.p>
 
-        <motion.div
-          variants={fadeUp}
-          style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
-        >
-          <a
-            href="/docs/getting-started/installation"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "12px 28px",
-              backgroundColor: "var(--accent)",
-              color: "#fff",
-              borderRadius: 8,
-              fontSize: 15,
-              fontWeight: 600,
-              textDecoration: "none",
-              transition: "background-color 0.2s",
-            }}
-          >
-            <Terminal size={16} />
-            Get Started
-          </a>
-          <a
-            href="https://github.com/PodJamz/8gent-code"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "12px 28px",
-              border: "1px solid var(--border-default)",
-              color: "var(--text-primary)",
-              borderRadius: 8,
-              fontSize: 15,
-              fontWeight: 500,
-              textDecoration: "none",
-              backgroundColor: "var(--surface-card)",
-            }}
-          >
-            View Source
-          </a>
-        </motion.div>
-
-        {/* Install snippet */}
+        {/* Install */}
         <motion.div
           variants={fadeUp}
           style={{
-            marginTop: 48,
-            padding: "16px 24px",
+            padding: "20px 24px",
             backgroundColor: "var(--surface-2)",
             borderRadius: 8,
             border: "1px solid var(--border-subtle)",
             fontFamily: "var(--font-mono)",
             fontSize: 14,
             color: "var(--text-secondary)",
-            textAlign: "left",
-            maxWidth: 560,
-            marginLeft: "auto",
-            marginRight: "auto",
+            marginBottom: 32,
             overflowX: "auto",
           }}
         >
-          <div>
+          <div style={{ marginBottom: 6 }}>
             <span style={{ color: "var(--text-muted)" }}>$</span> ollama pull
-            qwen3.5 && git clone https://github.com/PodJamz/8gent-code.git
+            qwen3.5
+          </div>
+          <div style={{ marginBottom: 6 }}>
+            <span style={{ color: "var(--text-muted)" }}>$</span> git clone
+            https://github.com/PodJamz/8gent-code.git
+          </div>
+          <div style={{ marginBottom: 6 }}>
+            <span style={{ color: "var(--text-muted)" }}>$</span> cd 8gent-code
+            && bun install
           </div>
           <div>
-            <span style={{ color: "var(--text-muted)" }}>$</span> cd 8gent-code
-            && bun install && bun run tui
+            <span style={{ color: "var(--text-muted)" }}>$</span>{" "}
+            <span style={{ color: "var(--accent)" }}>bun run tui</span>
           </div>
         </motion.div>
-      </motion.section>
 
-      {/* Benchmarks */}
-      <section
-        style={{
-          maxWidth: 900,
-          margin: "0 auto",
-          padding: "0 24px 80px",
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: "var(--font-serif)",
-            fontWeight: 700,
-            fontSize: "clamp(22px, 4vw, 32px)",
-            color: "var(--text-primary)",
-            textAlign: "center",
-            marginBottom: 40,
-          }}
-        >
-          Ran 250 execution tests. Code compiles or the score is zero.
-        </h2>
-        <div
+        {/* Quick links */}
+        <motion.div
+          variants={fadeUp}
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: 12,
           }}
         >
-          {BENCHMARKS.map((b) => (
-            <motion.div
-              key={b.domain}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              style={{
-                padding: 20,
-                backgroundColor: "var(--surface-card)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 8,
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 28,
-                  fontWeight: 700,
-                  color:
-                    b.score >= 95
-                      ? "var(--accent)"
-                      : b.score >= 90
-                        ? "#2D8A4E"
-                        : "var(--text-primary)",
-                }}
-              >
-                {b.score}
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "var(--text-secondary)",
-                  marginTop: 4,
-                }}
-              >
-                {b.domain}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+          <QuickLink
+            href="/docs/getting-started/installation"
+            icon={Terminal}
+            title="Installation"
+            desc="Set up Ollama, Bun, and get running"
+          />
+          <QuickLink
+            href="/docs"
+            icon={BookOpen}
+            title="Documentation"
+            desc="Architecture, guides, API reference"
+          />
+          <QuickLink
+            href="https://github.com/PodJamz/8gent-code"
+            icon={GitBranch}
+            title="Source Code"
+            desc="MIT licensed, contributions welcome"
+          />
+        </motion.div>
+      </motion.section>
 
-      {/* 8 Abilities */}
+      {/* What it does - plain description, no stat padding */}
       <section
         style={{
           backgroundColor: "var(--surface-1)",
           borderTop: "1px solid var(--border-subtle)",
           borderBottom: "1px solid var(--border-subtle)",
-          padding: "80px 24px",
+          padding: "64px 24px",
         }}
       >
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
           <h2
             style={{
               fontFamily: "var(--font-serif)",
               fontWeight: 700,
-              fontSize: "clamp(22px, 4vw, 32px)",
+              fontSize: "clamp(20px, 3vw, 28px)",
               color: "var(--text-primary)",
-              textAlign: "center",
-              marginBottom: 12,
+              marginBottom: 24,
             }}
           >
-            8 core abilities. Not plugins. Built in.
+            What Eight does
           </h2>
-          <p
-            style={{
-              textAlign: "center",
-              color: "var(--text-secondary)",
-              marginBottom: 48,
-              fontSize: 15,
-            }}
-          >
-            Every ability has measurable metrics tracked per session.
-          </p>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 16,
+              gap: 20,
+              color: "var(--text-secondary)",
+              fontSize: 15,
+              lineHeight: 1.7,
             }}
           >
-            {ABILITIES.map((a) => {
-              const Icon = a.icon;
-              return (
-                <motion.div
-                  key={a.name}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  style={{
-                    padding: 24,
-                    backgroundColor: "var(--surface-card)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: 8,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      marginBottom: 8,
-                    }}
-                  >
-                    <Icon
-                      size={18}
-                      style={{ color: "var(--accent)" }}
-                      strokeWidth={1.75}
-                    />
-                    <span
-                      style={{
-                        fontWeight: 600,
-                        fontSize: 15,
-                        color: "var(--text-primary)",
-                      }}
-                    >
-                      {a.name}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: "var(--text-secondary)",
-                      lineHeight: 1.5,
-                      marginBottom: 4,
-                    }}
-                  >
-                    {a.stat}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 12,
-                      color: "var(--text-muted)",
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {a.detail}
-                  </p>
-                </motion.div>
-              );
-            })}
+            <p>
+              Eight is a terminal-based coding agent with 8 built-in abilities:
+              persistent memory, parallel worktree execution, a policy engine
+              for safe operations, self-evolution via session reflection,
+              self-healing with atomic checkpoints, AST-level code navigation,
+              voice chat, and web browsing.
+            </p>
+            <p>
+              It runs entirely on your machine using Ollama for local inference.
+              Cloud models via OpenRouter are available as an opt-in fallback.
+              The TUI is built with Ink v6 (React for the terminal).
+            </p>
+            <p>
+              The system prompt improves itself through an autoresearch loop
+              inspired by Karpathy - run benchmarks, analyze failures, derive
+              mutations, re-test. The model router learns which model performs
+              best on which domain and routes accordingly.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Docs sections */}
       <section
         style={{
-          maxWidth: 700,
+          maxWidth: 720,
           margin: "0 auto",
-          padding: "80px 24px",
-          textAlign: "center",
+          padding: "64px 24px",
         }}
       >
         <h2
           style={{
             fontFamily: "var(--font-serif)",
             fontWeight: 700,
-            fontSize: "clamp(22px, 4vw, 32px)",
+            fontSize: "clamp(20px, 3vw, 28px)",
             color: "var(--text-primary)",
-            marginBottom: 16,
+            marginBottom: 24,
           }}
         >
-          Start coding with Eight in 3 commands.
+          Documentation
         </h2>
-        <p
+        <div
           style={{
-            color: "var(--text-secondary)",
-            marginBottom: 32,
-            fontSize: 15,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 12,
           }}
         >
-          No API keys. No sign-up. No cloud dependency.
-        </p>
-        <a
-          href="/docs/getting-started/installation"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "14px 32px",
-            backgroundColor: "var(--accent)",
-            color: "#fff",
-            borderRadius: 8,
-            fontSize: 16,
-            fontWeight: 600,
-            textDecoration: "none",
-          }}
-        >
-          Read the Docs
-        </a>
+          <DocSection
+            href="/docs/getting-started/installation"
+            title="Getting Started"
+            pages={["Installation", "Quick Start", "Configuration"]}
+          />
+          <DocSection
+            href="/docs/architecture/overview"
+            title="Architecture"
+            pages={["Overview", "Model Router", "Autoresearch", "Kernel"]}
+          />
+          <DocSection
+            href="/docs/guides/tui"
+            title="Guides"
+            pages={["TUI", "Personalization", "OpenRouter", "MCP"]}
+          />
+          <DocSection
+            href="/docs/reference/cli"
+            title="Reference"
+            pages={["CLI", "Slash Commands", "Tools", "Hooks"]}
+          />
+        </div>
       </section>
 
       <EcosystemFooter />
     </div>
+  );
+}
+
+function QuickLink({
+  href,
+  icon: Icon,
+  title,
+  desc,
+}: {
+  href: string;
+  icon: typeof Terminal;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <a
+      href={href}
+      style={{
+        display: "block",
+        padding: 20,
+        backgroundColor: "var(--surface-card)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: 8,
+        textDecoration: "none",
+        transition: "border-color 0.2s",
+      }}
+    >
+      <Icon
+        size={18}
+        style={{ color: "var(--accent)", marginBottom: 8 }}
+        strokeWidth={1.75}
+      />
+      <div
+        style={{
+          fontWeight: 600,
+          fontSize: 15,
+          color: "var(--text-primary)",
+          marginBottom: 4,
+        }}
+      >
+        {title}
+      </div>
+      <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>
+        {desc}
+      </div>
+    </a>
+  );
+}
+
+function DocSection({
+  href,
+  title,
+  pages,
+}: {
+  href: string;
+  title: string;
+  pages: string[];
+}) {
+  return (
+    <a
+      href={href}
+      style={{
+        display: "block",
+        padding: 20,
+        backgroundColor: "var(--surface-card)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: 8,
+        textDecoration: "none",
+      }}
+    >
+      <div
+        style={{
+          fontWeight: 600,
+          fontSize: 15,
+          color: "var(--text-primary)",
+          marginBottom: 8,
+        }}
+      >
+        {title}
+      </div>
+      <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>
+        {pages.join(" / ")}
+      </div>
+    </a>
   );
 }
