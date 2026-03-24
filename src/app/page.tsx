@@ -132,20 +132,11 @@ export default function Home() {
           }}
         >
           <div style={{ marginBottom: 6 }}>
-            <span style={{ color: "var(--text-muted)" }}>$</span> ollama pull
-            qwen3.5
-          </div>
-          <div style={{ marginBottom: 6 }}>
-            <span style={{ color: "var(--text-muted)" }}>$</span> git clone
-            https://github.com/PodJamz/8gent-code.git
-          </div>
-          <div style={{ marginBottom: 6 }}>
-            <span style={{ color: "var(--text-muted)" }}>$</span> cd 8gent-code
-            && bun install
+            <span style={{ color: "var(--text-muted)" }}>$</span> npm install -g @podjamz/8gent-code
           </div>
           <div>
             <span style={{ color: "var(--text-muted)" }}>$</span>{" "}
-            <span style={{ color: "var(--accent)" }}>bun run tui</span>
+            <span style={{ color: "var(--accent)" }}>8gent</span>
           </div>
         </motion.div>
 
@@ -162,7 +153,7 @@ export default function Home() {
             href="/docs/getting-started/installation"
             icon={Terminal}
             title="Installation"
-            desc="Set up Ollama, Bun, and get running"
+            desc="npm install and start coding"
           />
           <QuickLink
             href="/docs"
