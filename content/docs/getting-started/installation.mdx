@@ -3,41 +3,31 @@ title: Installation
 description: Install 8gent Code and its dependencies to start coding with local LLMs.
 ---
 
-## Prerequisites
-
-8gent runs on your local machine using Bun as its runtime and Ollama for local LLM inference. You need three things installed before starting.
-
-### 1. Install Bun
-
-Bun is a fast JavaScript runtime that 8gent uses for everything from the TUI to benchmarks.
+## Install 8gent
 
 ```bash
-curl -fsSL https://bun.sh/install | bash
+npm install -g @podjamz/8gent-code
+8gent
 ```
 
-Verify the installation:
+That's it. Two commands. 8gent will guide you through Ollama setup on first launch if needed.
 
-```bash
-bun --version
-```
+Three binary aliases are installed: `8gent`, `8gent-code`, and `8` (shortcut).
 
-### 2. Install Ollama
+## Prerequisites (automatic)
 
-Ollama manages local LLM models. Download it from [ollama.ai](https://ollama.ai) or install via Homebrew on macOS:
+8gent uses Ollama for local LLM inference. If you don't have it, the first-run setup will walk you through it. To install manually:
+
+### Ollama
+
+Download from [ollama.ai](https://ollama.ai) or install via Homebrew on macOS:
 
 ```bash
 brew install ollama
-```
-
-Start the Ollama service:
-
-```bash
 ollama serve
 ```
 
-### 3. Pull a Model
-
-Any capable coding model works. Start with one of these:
+### Pull a Model
 
 ```bash
 # Recommended starting model
@@ -50,53 +40,24 @@ ollama pull devstral:latest
 ollama pull qwen3:14b
 ```
 
-The fine-tuned `eight-1.0-q3:14b` model is available as a preview (trained via 8gent's autoresearch pipeline). Pull it if you want to test the latest checkpoint.
-
 If you do not have a local GPU, see the [OpenRouter guide](/docs/guides/openrouter) for free cloud model access.
 
-## Install 8gent
+## Verify Installation
 
-Clone the repository and install dependencies:
+```bash
+8gent
+```
+
+You should see the 8gent TUI appear with its splash animation. If Ollama is not running, 8gent will show a connection error in the status bar.
+
+## Install from Source (Contributors)
 
 ```bash
 git clone https://github.com/PodJamz/8gent-code.git
 cd 8gent-code
 bun install
+bun run tui
 ```
-
-### Create a Global Command
-
-Set up `8gent` (and its short alias `8`) as a global command:
-
-```bash
-mkdir -p ~/.local/bin
-ln -sf "$(pwd)/apps/tui/src/index.tsx" ~/.local/bin/8gent
-chmod +x ~/.local/bin/8gent
-```
-
-Add `~/.local/bin` to your PATH if it is not already there:
-
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-## Verify Installation
-
-Run the following checks to confirm everything is working:
-
-```bash
-# Check Bun
-bun --version
-
-# Check Ollama is running and has a model
-ollama list
-
-# Launch 8gent
-8gent
-```
-
-You should see the 8gent TUI appear with its splash animation. If Ollama is not running, 8gent will show a connection error in the status bar.
 
 ## Troubleshooting
 
