@@ -169,7 +169,7 @@ export TRAINING_PROXY_URL=http://localhost:30000
 8gent-proxy start
 
 # 4. Run 8gent normally - sessions now generate training signal
-bun run tui
+8gent
 
 # 5. Validate a checkpoint against benchmarks
 bun run benchmarks/autoresearch/validate-checkpoint.ts
