@@ -64,7 +64,7 @@ export default function Home() {
               Docs
             </a>
             <a
-              href="https://github.com/PodJamz/8gent-code"
+              href="https://github.com/8gi-foundation/8gent-code"
               style={{
                 fontSize: 14,
                 color: "var(--text-secondary)",
@@ -162,7 +162,7 @@ export default function Home() {
             desc="Architecture, guides, API reference"
           />
           <QuickLink
-            href="https://github.com/PodJamz/8gent-code"
+            href="https://github.com/8gi-foundation/8gent-code"
             icon={GitBranch}
             title="Source Code"
             desc="MIT licensed, contributions welcome"

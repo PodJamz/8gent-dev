@@ -84,7 +84,7 @@ export function EcosystemFooter() {
           <span>8gent - The Infinite Gentleman</span>
           <div style={{ display: "flex", gap: 16 }}>
             <a
-              href="https://github.com/PodJamz/8gent-code"
+              href="https://github.com/8gi-foundation/8gent-code"
               style={{ color: "var(--text-secondary)", textDecoration: "none" }}
             >
               GitHub
